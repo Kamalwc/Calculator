@@ -23,6 +23,12 @@ class Parent extends React.Component{
       uppercaseLetters:false
     }
   }
+
+  setPassword = (password) =>{
+    this.setState({
+      password:password
+    })
+  }
   
   handler = (len,sym1,sym2,sym3,sym4, num,lowcse,uppcse)=>{
     this.setState({
@@ -36,11 +42,15 @@ class Parent extends React.Component{
       uppercaseLetters:uppcse
     });
   }
+
+  printState = ()=>{
+    console.log(this.state.password)
+  }
   render(){
     return(
       <div id="parent">
           <Display password={this.state.password}/>
-          <Input symbols={this.state.symbols} set={this.handler}/>
+          <Input symbols={this.state.symbols} set={this.handler} />
           <Generate 
             password={this.state.password}  
             length={this.state.length}  
@@ -51,6 +61,7 @@ class Parent extends React.Component{
             numbers={this.state.numbers}
             lowercaseLetters={this.state.lowercaseLetters}
             uppercaseLetters={this.state.uppercaseLetters}
+            setPass={this.setPassword}
           />
       </div>
     );
@@ -79,7 +90,7 @@ class Display extends React.Component{
 class Input extends React.Component{
   checked = () =>{
 
-    let length = document.getElementById("length").value.length,
+    let length = document.getElementById("length").value,
         checkSym1 = document.getElementById("symbols1").checked,
         checkSym2 = document.getElementById("symbols2").checked,
         checkSym3 = document.getElementById("symbols3").checked,
@@ -197,9 +208,10 @@ class Generate extends React.Component{
 
   generatePassword = () =>{
         let fbag = this.filter();
-        let rsym,randomsymb,min,ch,max,maxf,intervalArray,bagPick,randomChar,random,char;
+        let min,max,intervalArray,bagPick,randomChar,char;
         let randmax, length = this.props.length;
           let password=[];
+          console.log(length)
           for(let i = 0; i<length; i++){
               randmax = fbag.length -1;
               bagPick = Math.floor((Math.random() *  (randmax - 0 + 1) + 0));
@@ -210,10 +222,10 @@ class Generate extends React.Component{
               randomChar = Math.floor(Math.random() * (max - min + 1) + min);
               char = String.fromCharCode(randomChar);
               
+              // console.log('char');
               password.push(char)
-              
-          }
-          console.log(password);
+          };
+        this.props.setPass(password);
   };
   render(){
     return(
