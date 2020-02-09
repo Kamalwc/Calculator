@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import BigInt from 'big-integer';
 
 function App() {
   return (
@@ -43,14 +44,31 @@ class Parent extends React.Component{
     });
   }
 
+  strength = () =>{
+    let strength,length,checkSym1,checkSym2,checkSym3,checkSym4,checkNum,checkLowcse,checkUppcse;
+    // CALL THIS METHOD IN INPUT ONCHANGE SO A NEW CALCULATION IS TRIGGERED EVERYTIME.
+    document.getElementById("symbols1").checked ? checkSym1 = 14 : checkSym1 = 0;
+    document.getElementById("symbols2").checked ? checkSym2 = 6 : checkSym2 = 0;
+    document.getElementById("symbols3").checked ? checkSym3 = 5 : checkSym3 = 0;
+    document.getElementById("symbols4").checked ? checkSym4 = 3 : checkSym4 = 0;
+    document.getElementById("numbers").checked ? checkNum = 9 : checkNum = 0 ;
+    document.getElementById("lowercase").checked ? checkLowcse = 25 : checkLowcse = 0 ;
+    document.getElementById("uppercase").checked ? checkUppcse = 25 : checkUppcse = 0 ;
+    // let complexity = Math.pow((checkSym1 + checkSym2 + checkSym3 + checkSym4 + checkNum + checkLowcse + checkUppcse), this.state.length);
+    let complexity = Math.pow((3), this.state.length);
+    // console.log(typeof this.state.length)
+
+    console.log(BigInt(complexity)); //import BIG INT into project so the huge nubmer can display
+  }
+
   printState = ()=>{
     console.log(this.state.password)
   }
   render(){
     return(
       <div id="parent">
-          <Display password={this.state.password}/>
-          <Input symbols={this.state.symbols} set={this.handler} />
+          <Display password={this.state.password} length={this.state.length} strength={this.strength}/>
+          <Input symbols={this.state.symbols} set={this.handler} strength={this.strength}/>
           <Generate 
             password={this.state.password}  
             length={this.state.length}  
@@ -71,10 +89,15 @@ class Parent extends React.Component{
 class Display extends React.Component{
   
   render(){
-    /*
-    crunch code here to decide Password strength.
-    apply strength to the width of the strength bar DIV
-     */
+    
+    // calculate password strength and apply to width bar 
+    //     The 'randomness' of a password is simple to calculate: complexity ^ length, where ^ is exponentiation. 
+    //     As you might know, changing the exponent (the length) makes the number much larger than changing the base (complexity).
+
+    // For example, a random password using 6 characters, consisting of a-z, A-Z, and 0-9, has a complexity of 62 (26 + 26 + 10) and a 
+    // length of 6, making 62^6= ~56 billion possible passwords. It is well-known that 6 characters is very insecure for most purposes,
+    //  even when randomly generated.
+    
     // let style = {
     //   width:
     // };
@@ -100,6 +123,11 @@ class Input extends React.Component{
         checkUppcse = document.getElementById("uppercase").checked;
     this.props.set(length,checkSym1,checkSym2,checkSym3,checkSym4,checkNum,checkLowcse,checkUppcse);
   } 
+
+  checkNstrength = () =>{
+    this.checked();
+    this.props.strength();
+  }
   render(){
     return(
       <div id="input">
@@ -110,57 +138,58 @@ class Input extends React.Component{
             id="length" 
             type="text" 
             size="5" 
-            onChange={()=> this.checked()}/><br/>
+            /* ALSO CALL THE STRENGTH METHOD TO TRIGGER A NEW CALCULATION */
+            onChange={()=> this.checkNstrength()}/><br/>
           <input 
             name="symbols" 
             type="checkbox" 
             id="symbols1"
-            onChange={()=> this.checked()}
+            onChange={()=> this.checkNstrength()}
             />
           <label className="checkbox">Include Type1 Symbols</label><br/>
           <input 
             name="symbols" 
             type="checkbox" 
             id="symbols2"
-            onChange={()=> this.checked()}
+            onChange={()=> this.checkNstrength()}
             />
           <label className="checkbox">Include Type2 Symbols</label><br/>
           <input 
             name="symbols" 
             type="checkbox" 
             id="symbols3"
-            onChange={()=> this.checked()}
+            onChange={()=> this.checkNstrength()}
             />
           <label className="checkbox">Include Type3 Symbols</label><br/>
           <input 
             name="symbols" 
             type="checkbox" 
             id="symbols4"
-            onChange={()=> this.checked()}
+            onChange={()=> this.checkNstrength()}
             />
           <label className="checkbox">Include Type4 Symbols</label><br/>
           <input 
             name="numbers" 
             id="numbers" 
             type="checkbox"
-            onChange={()=> this.checked()}/>
+            onChange={()=> this.checkNstrength()}/>
           <label className="checkbox">Include Numbers</label><br/>
           <input 
             name="lowercase" 
             id="lowercase" 
             type="checkbox"
-            onChange={()=> this.checked()}/>
+            onChange={()=> this.checkNstrength()}/>
           <label className="checkbox">Include lowercase letters</label><br/>
           <input 
             name="uppercase" 
             id="uppercase"
             type="checkbox"
-            onChange={()=> this.checked()}/>
+            onChange={()=> this.checkNstrength()}/>
           <label className="checkbox">Include uppercase</label><br/>
         </div>
         <div id="inputRight"> 
           <h1>Test</h1>
-          <button id="generate" onClick={()=>this.checked()}></button>
+          <button id="generate" onClick={()=>this.checkNstrength()}></button>
         </div>
       </div>
     );
@@ -172,31 +201,31 @@ class Generate extends React.Component{
   filter = () =>{
     let bag = [
       {
-        interval:"33-47",
+        interval:"33-47", //14
         checked:this.props.symbols1
       },
       {
-        interval:"58-64",
+        interval:"58-64",//6
         checked:this.props.symbols2
       },
       {
-        interval:"91-96",
+        interval:"91-96",//5
         checked:this.props.symbols3
       },
       {
-        interval:"123-126",
+        interval:"123-126",//3
         checked:this.props.symbols4
       },
       {
-        interval:"48-57",
+        interval:"48-57",//9
         checked:this.props.numbers
       },
       {
-        interval:"65-90",
+        interval:"65-90",//25
         checked:this.props.uppercaseLetters
       },
       {
-        interval:"97-122",
+        interval:"97-122",//25
         checked:this.props.lowercaseLetters
       }
     ];
